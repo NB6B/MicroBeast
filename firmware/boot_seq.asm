@@ -218,40 +218,39 @@ _uart_ready5
 ;
 
 Perform_Ram_Clear				
-		        LD A, RAM_PAGE_0  ;start at RAM PAGE 00h (20h), until 05h (20h). It takes about 1.5 secs on 8 MHz.
+                    LD A, RAM_PAGE_0  ;start at RAM PAGE 00h (20h), until 05h (20h). It takes about 1.5 secs on 8 MHz.
 		
-		        EXX	;Save which page we are using, without using stack
-		        LD E, A
-		        EXX     ;Now the page is stored in shadow register E'
+                    EXX	;Save which page we are using, without using stack
+                    LD E, A
+                    EXX     ;Now the page is stored in shadow register E'
 
-_Loop_Pages	        OUT (IO_MEM_2), A
+_Loop_Pages         OUT (IO_MEM_2), A
 
-	                LD HL, 8000h	 ;Starting Address is the location of IO_MEM_2
-	                LD BC, 4000h	 ;Number of Bytes to check (Full Page)
+                    LD HL, 8000h	 ;Starting Address is the location of IO_MEM_2
+                    LD BC, 4000h	 ;Number of Bytes to check (Full Page)
 
-		        XOR A	  ;set A=0. We can choose any arbitrary value here, but zero is most logical
+                    XOR A	  ;set A=0. We can choose any arbitrary value here, but zero is most logical
 
-		        LD (HL), A
-		        DEC BC
-		        LD D, H
-	        	LD E, L
-            		INC DE
-            		LDIR
+                    LD (HL), A
+                    DEC BC
+                    LD D, H
+                    LD E, L
+                    INC DE
+                    LDIR
 
-            		EXX	;Restore which page we are using, without using stack
-        		LD A, E
-        		EXX
+                    EXX	;Restore which page we are using, without using stack
+                    LD A, E
+                    EXX
 
-    	        	CP 025H    ;If we are at page 25h in ram, then continue with booting
-            		JP Z, Continue_Boot
+                    CP 025H    ;If we are at page 25h in ram, then continue with booting
+                    JP Z, Continue_Boot
 
-            		INC A   ;increment page to the next one and then repeat
+                    INC A   ;increment page to the next one and then repeat
 
-            		EXX	;Save which page we are using, without using stack
-    		        LD E, A
-		        EXX     ;Now the page is stored in shadow register E'
-
-		        JP _Loop_Pages
+                    EXX	;Save which page we are using, without using stack
+                    LD E, A
+                    EXX     ;Now the page is stored in shadow register E'
+                    JP _Loop_Pages
 Continue_Boot
 
 ;
